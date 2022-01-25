@@ -1,22 +1,38 @@
 import Vue from "vue";
-import axios from "axios";
+import StrapiClient from "strapi-sdk-js";
 
-const TOKEN_KEY = "token";
+const TOKEN_KEY = "strapi_jwt";
 
 const defaults = {
-  url: process.env.STRAPI_URL || "http://localhost:1337",
+  url: process.env.API_URL || "http://localhost:1337",
+  prefix: "/api", // only works in v2
+  store: {
+    key: TOKEN_KEY,
+    useLocalStorage: false,
+    cookieOptions: {
+      path: "/"
+    }
+  },
+  axiosOptions: {
+    baseURL: process.env.API_URL || "http://localhost:1337/api"
+  },
   entities: []
 };
 
 class Strapi {
   constructor(options) {
-    const instance = axios.create({
-      baseURL: options.url || defaults.url
+    const instance = new StrapiClient({
+      ...defaults,
+      ...options
     });
 
-    this.state = Vue.observable({ user: null });
-    this.$http = instance;
+    this.state = Vue.observable({
+      user: null
+    });
+    this.$strapi = instance;
+    this.$http = instance.axios;
     this.setAuthorizationToken(this.getToken());
+    // console.log(this.$http.axios);
   }
 
   get user() {
@@ -29,9 +45,10 @@ class Strapi {
 
   async register(input, storageEngine = localStorage) {
     this.clearToken();
-    const {
-      data: { user, jwt }
-    } = await this.$http.post("/auth/local/register", input);
+    // const {
+    //   data: { user, jwt }
+    // } = await this.$http.post("/auth/local/register", input);
+    const { user, jwt } = await this.$strapi.register(input);
 
     this.setToken(jwt, storageEngine);
     this.setUser(user);
@@ -42,14 +59,22 @@ class Strapi {
   async login(input, storageEngine = localStorage) {
     this.clearToken();
 
-    const {
-      data: { user, jwt }
-    } = await this.$http.post("/auth/local", input);
+    try {
+      // const {
+      //   data: { user, jwt },
+      // } = await this.$http.post("/auth/local", input);
+      const { user, jwt } = await this.$strapi.login(input);
 
-    this.setToken(jwt, storageEngine);
-    this.setUser(user);
+      this.setToken(jwt, storageEngine);
+      this.setUser(user);
 
-    return { user, jwt };
+      return {
+        user,
+        jwt
+      };
+    } catch (error) {
+      console.log("wrong password", error);
+    }
   }
 
   async forgotPassword(input) {
@@ -69,7 +94,10 @@ class Strapi {
     this.setToken(jwt);
     this.setUser(user);
 
-    return { user, jwt };
+    return {
+      user,
+      jwt
+    };
   }
 
   async sendEmailConfirmation(input) {
@@ -110,13 +138,17 @@ class Strapi {
   }
 
   async find(entity, params) {
-    const { data } = await this.$http.get(`/${entity}`, { params });
+    const { data } = await this.$http.get(`/${entity}`, {
+      params
+    });
 
     return data;
   }
 
   async count(entity, params) {
-    const { data } = await this.$http.get(`/${entity}/count`, { params });
+    const { data } = await this.$http.get(`/${entity}/count`, {
+      params
+    });
 
     return data;
   }

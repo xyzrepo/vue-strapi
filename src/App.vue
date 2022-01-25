@@ -14,8 +14,8 @@ export default {
   methods: {
     login() {
       this.$strapi.login({
-        identifier: "user@domain.com",
-        password: "password"
+        identifier: "baker@shamlan.sa",
+        password: "a813424B"
       });
     },
     logout() {

@@ -1,7 +1,7 @@
 {
-  "name": "@gravitybv/vue-strapi",
-  "version": "0.1.9",
-  "description": "A Strapi plugin for Vue.js",
+  "name": "@xyz/vue-strapi",
+  "version": "0.0.2",
+  "description": "A Vue.js plugin for Strapi v4+",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,22 +9,22 @@
     "build-library": "vue-cli-service build --target lib --name vue-strapi ./src/plugins/strapi.js",
     "lint": "vue-cli-service lint"
   },
-  "repository": "git+https://github.com/gravitybv/vue-strapi.git",
+  "repository": "git+https://github.com/xyzrepo/vue-strapi.git",
   "main": "dist/vue-strapi.common.js",
   "files": [
     "dist/*"
   ],
   "author": {
-    "name": "Gravity BV",
-    "email": "info@gravity.nl"
+    "name": "Baker",
+    "email": "root@xyz.dev"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gravitybv/vue-strapi/issues"
+    "url": "https://github.com/xyzrepo/vue-strapi/issues"
   },
-  "homepage": "https://github.com/gravitybv/vue-strapi#readme",
+  "homepage": "https://github.com/xyzrepo/vue-strapi#readme",
   "dependencies": {
-    "axios": "^0.21.0"
+    "strapi-sdk-js": "^2.1.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
